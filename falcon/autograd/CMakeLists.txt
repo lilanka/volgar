@@ -10,3 +10,6 @@ target_sources(
   PRIVATE
   ${AUTOGRAD_SOURCES}
 )
+
+target_include_directories(falcon
+  ${CMAKE_CURRENT_LIST_DIR}/operators)

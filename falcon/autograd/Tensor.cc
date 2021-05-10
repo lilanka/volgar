@@ -1,17 +1,44 @@
 #include "Tensor.h"
+#include <iostream>
+
 
 namespace Falcon {
 
-  bool Tensor::isGradOn(bool val) {
-    if (requires_grad || val) 
-     return true;
-    return false; 
-  }
+Tensor::Tensor(af::array data, bool requires_grad) {
+  tensorData_->data = std::move(data);
+  tensorData_->requires_grad = requires_grad;
+}
 
-  Tensor Tensor::operator+(const Tensor& tensor) {
-    af::array d = data + tensor.data;
-    Tensor x = Tensor(d, isGradOn(tensor.requires_grad));
-    af_print(x.data);
-    return tensor;
-  }
+bool Tensor::isGradOn(bool val) {
+  if (tensorData_->requires_grad || val) 
+   return true;
+  return false; 
+}
+
+af::array& Tensor::array() const {
+  return tensorData_->data;
+}
+
+Tensor Tensor::operator+(const Tensor& tensor) {
+  af::array temp_array = add.forward(array(), tensor.array());
+  Tensor results = Tensor(temp_array, isGradOn(tensor.tensorData_->requires_grad)); 
+  return results;
+}
+
+Tensor Tensor::operator-(const Tensor& tensor) {
+  af::array temp_array = sub.forward(array(), tensor.array());
+  Tensor results = Tensor(temp_array, isGradOn(tensor.tensorData_->requires_grad)); 
+  return results;
+}
+Tensor Tensor::operator*(const float num) {
+  af::array temp_array = mul.forward(array(), num);
+  Tensor results = Tensor(temp_array, isGradOn(false)); 
+  return results;
+}
+
+Tensor Tensor::operator/(const float num) {
+  af::array temp_array = div.forward(array(), num);
+  Tensor results = Tensor(temp_array, isGradOn(false)); 
+  return results;
+}
 }
