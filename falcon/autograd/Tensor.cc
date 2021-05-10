@@ -1,7 +1,6 @@
 #include "Tensor.h"
 #include <iostream>
 
-
 namespace Falcon {
 
 Tensor::Tensor(af::array data, bool requires_grad) {

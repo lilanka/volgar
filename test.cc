@@ -12,16 +12,16 @@ int main() {
   Tensor x1 = Tensor(a, true);
   Tensor x2 = Tensor(b, true);
 
-  Tensor x1_out = x1 + x2;
-  Tensor x2_out = x1 - x2;
-  Tensor x3_out = x1 * 2.5;
-  Tensor x4_out = x1 / 2.5;
+  Tensor y1 = x1 + x2;
+  Tensor y2 = x1 - x2;
+  Tensor y3 = x1 * 2.5;
+  Tensor y4 = x1 / 2.5;
+  Tensor _add = y1 + y2;
 
-  af_print(x1_out.array());
-  af_print(x2_out.array());
-  af_print(x3_out.array());
-  af_print(x4_out.array());
+  af_print(y1.array());
+  af_print(y2.array());
+  af_print(y3.array());
+  af_print(y4.array());
 
-  Tensor _add = x1_out + x2_out;
   af_print(_add.array());
 }
