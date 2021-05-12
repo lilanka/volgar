@@ -8,9 +8,15 @@ Tensor::Tensor(af::array data, bool requires_grad) {
   tensorData_->requires_grad = requires_grad;
 }
 
+Tensor::Tensor(af::array data, std::vector<Tensor> parents, bool requires_grad) {
+  tensorData_->data = std::move(data);
+  tensorData_->requires_grad = requires_grad;
+  tensorData_->parents = std::move(parents); 
+}
+
 bool Tensor::isGradOn(bool val) {
   if (tensorData_->requires_grad || val) 
-   return true;
+    return true;
   return false; 
 }
 
@@ -18,26 +24,40 @@ af::array& Tensor::array() const {
   return tensorData_->data;
 }
 
+std::vector<Tensor> Tensor::parentSetUp(const Tensor* other) {
+  std::vector<Tensor> parents;
+  if (!other) 
+    return parents;
+  parents.insert(parents.end(), {*this, *other});
+  return parents;
+}
+
 Tensor Tensor::operator+(const Tensor& tensor) {
-  af::array temp_array = add.forward(array(), tensor.array());
-  Tensor results = Tensor(temp_array, isGradOn(tensor.tensorData_->requires_grad)); 
+  Tensor results = Tensor(add.forward(array(), tensor.array()), \
+      parentSetUp(&tensor), isGradOn(tensor.tensorData_->requires_grad));
   return results;
 }
 
 Tensor Tensor::operator-(const Tensor& tensor) {
-  af::array temp_array = sub.forward(array(), tensor.array());
-  Tensor results = Tensor(temp_array, isGradOn(tensor.tensorData_->requires_grad)); 
+  Tensor results = Tensor(sub.forward(array(), tensor.array()), \
+      parentSetUp(&tensor), isGradOn(tensor.tensorData_->requires_grad)); 
   return results;
 }
 Tensor Tensor::operator*(const float num) {
-  af::array temp_array = mul.forward(array(), num);
-  Tensor results = Tensor(temp_array, isGradOn(false)); 
+  Tensor results = Tensor(mul.forward(array(), num), \
+      parentSetUp(nullptr), isGradOn(false)); 
   return results;
 }
 
 Tensor Tensor::operator/(const float num) {
-  af::array temp_array = div.forward(array(), num);
-  Tensor results = Tensor(temp_array, isGradOn(false)); 
+  Tensor results = Tensor(div.forward(array(), num), \
+      parentSetUp(nullptr), isGradOn(false)); 
+  return results;
+}
+
+Tensor Tensor::matmul(const Tensor& tensor) {
+  Tensor results = Tensor(_matmul.forward(array(), tensor.array()), \
+      parentSetUp(&tensor), isGradOn(tensor.tensorData_->requires_grad)); 
   return results;
 }
 }
