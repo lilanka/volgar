@@ -1,7 +1,12 @@
-#include <arrayfire.h>
+#pragma once
 
+#include <arrayfire.h>
+#include "falcon/autograd/Tensor.h"
+
+using namespace Falcon;
 class Add {
 public:
   Add() = default;
-  af::array forward(const af::array& a, const af::array& b);    
+  Tensor forward(const Tensor& a, const Tensor& b);    
+  void backward(const Tensor& a, const Tensor& b);
 };

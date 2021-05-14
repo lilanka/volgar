@@ -1,3 +1,5 @@
 #include "Sub.h"
 
-af::array Sub::forward(const af::array& a, const af::array& b) { return a - b; }
+Tensor Sub::forward(const Tensor& a, const Tensor& b) { 
+  return Tensor(a.array() - b.array(), a.isGradOn(&b));
+}

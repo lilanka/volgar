@@ -1,3 +1,5 @@
 #include "Mul.h"
 
-af::array Mul::forward(const af::array& a, const float b) { return a * b; }
+Tensor Mul::forward(const Tensor& a, const float b) { 
+  return Tensor(a.array() * b, a.isGradOn(nullptr));
+}

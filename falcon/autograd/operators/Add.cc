@@ -1,3 +1,5 @@
-#include "Add.h"
+#include "falcon/autograd/operators/Add.h"
 
-af::array Add::forward(const af::array& a, const af::array& b) { return a + b; }
+Tensor Add::forward(const Tensor& a, const Tensor& b) { 
+  return Tensor(a.array() + b.array(), a.isGradOn(&b)); 
+}

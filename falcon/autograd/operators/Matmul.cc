@@ -1,5 +1,5 @@
 #include "Matmul.h"
 
-af::array Matmul::forward(const af::array& a, const af::array& b) {
-  return af::matmulTN(a, b);
+Tensor Matmul::forward(const Tensor& a, const Tensor& b) {
+  return Tensor(af::matmulTN(a.array(), b.array()), a.isGradOn(&b));
 }

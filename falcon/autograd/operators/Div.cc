@@ -1,3 +1,5 @@
-#include "Div.h"
+#include "falcon/autograd/operators/Div.h"
 
-af::array Div::forward(const af::array& a, const float b) { return a / b; }
+Tensor Div::forward(const Tensor& a, const float b) { 
+  return Tensor(a.array() / b, a.isGradOn(nullptr)); 
+}

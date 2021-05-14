@@ -1,15 +1,15 @@
 #include <iostream>
 #include <arrayfire.h>
 
-#include "falcon.h"
+#include "falcon/falcon.h"
 
 using namespace Falcon;
 
 int main() {
-  af::array a = af::randu(5, 5);
-  af::array b = af::randu(5, 5);
-  af::array c = af::randu(5, 10);
-
+  af::array a = af::constant(1, 5, 5);
+  af::array b = af::constant(1, 5, 5);
+  af::array c = af::constant(1, 5, 10);
+  
   Tensor x1 = Tensor(a, true);
   Tensor x2 = Tensor(b, true);
   Tensor x3 = Tensor(c, false);
@@ -28,4 +28,6 @@ int main() {
 
   af_print(_add.array());
   af_print(_dot.array());
+
+  _add.backward();
 }

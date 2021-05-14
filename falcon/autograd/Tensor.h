@@ -1,12 +1,10 @@
-#pragma once
+#pragma once 
 
 #include <arrayfire.h>
 #include <utility>
 #include <memory>
 #include <string>
 #include <vector>
-
-#include "operators.h"
 
 namespace Falcon {
 
@@ -63,7 +61,12 @@ public:
   Tensor matmul(const Tensor& tensor);
   
   // check whether the output tensor should requires_grad on or not
-  bool isGradOn(bool val);
+  bool isGradOn(const Tensor* other) const;
+  
+  /*
+  * backward pass
+  */
+  void backward();
 
 private:   
   /*
@@ -73,14 +76,9 @@ private:
     af::array data;  // data of the variable
     bool requires_grad{false}; // does this variable calculate the grads
     std::vector<Tensor> parents; // parents of this variable
+    std::vector<af::array> grad; // gradient of the variable
   }; 
 
   std::shared_ptr<tensorData> tensorData_{std::make_shared<tensorData>()};
-
-  Add add;
-  Sub sub;
-  Mul mul;
-  Div div;
-  Matmul _matmul;
 };
 }

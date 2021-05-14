@@ -1,7 +1,11 @@
-#include <arrayfire.h>
+#pragma once
 
+#include <arrayfire.h>
+#include "falcon/autograd/Tensor.h"
+
+using namespace Falcon;
 class Div {
 public:
   Div() = default;
-  af::array forward(const af::array& a, const float b);
+  Tensor forward(const Tensor& a, const float b);
 };

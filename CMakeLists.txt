@@ -15,9 +15,4 @@ add_executable(falcon ${SOURCE})
 find_package(ArrayFire)
 target_link_libraries(falcon ArrayFire::afcpu)
 
-target_include_directories(falcon
-  PUBLIC
-    ${PROJECT_SOURCE_DIR}/falcon
-    ${PROJECT_SOURCE_DIR}/falcon/autograd
-    ${PROJECT_SOURCE_DIR}/falcon/autograd/operators
-)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
