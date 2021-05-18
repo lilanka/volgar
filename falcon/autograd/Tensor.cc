@@ -29,6 +29,14 @@ af::array& Tensor::array() const {
   return tensorData_->data;
 }
 
+void Tensor::grad() const {
+  af::array total = af::constant(0, (tensorData_->grad[0]).dims());
+  for (af::array& grad : tensorData_->grad) {
+    total += grad;
+  }
+  af_print(total);
+}
+
 Tensor Tensor::operator+(const Tensor& tensor) {
   Add add;
   return add.forward(*this, tensor);
@@ -53,7 +61,23 @@ Tensor Tensor::matmul(const Tensor& tensor) {
   return _matmul.forward(*this, tensor);
 }
 
+void Tensor::backward(const Tensor& tensor, const af::array& output_grad) {
+  if (tensor.tensorData_->visited) { return; };
+  tensor.tensorData_->visited = {true};
+  addBackward(output_grad); // for testing: add flexible method for all operations
+  for (int i=0; i< tensor.tensorData_->parents.size(); i++) {   
+    backward(tensor.tensorData_->parents[i], tensor.tensorData_->grad[i]);
+  }
+}
+
+void Tensor::addBackward(const af::array& output_grad) {
+  for (int i=0; i < tensorData_->parents.size(); i++) {
+    tensorData_->grad[i] += output_grad;
+  }
+}
+
 void Tensor::backward() {
   af::array initial_grad = af::constant(1, tensorData_->data.dims());
+  backward(*this, initial_grad);
 }
 }

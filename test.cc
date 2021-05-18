@@ -18,7 +18,7 @@ int main() {
   Tensor y2 = x1 - x2;
   Tensor y3 = x1 * 2.5;
   Tensor y4 = x1 / 2.5;
-  Tensor _add = y1 + y2;
+  Tensor add = y1 + y2;
   Tensor _dot_ = x1.matmul(x2);
   Tensor _dot = x2.matmul(x3);  // dot product
 
@@ -29,10 +29,10 @@ int main() {
   af_print(y3.array());
   af_print(y4.array());
 
-  af_print(_add.array());
+  af_print(add.array());
   af_print(_dot_.array());
   af_print(_dot.array());
   af_print(add_dot.array());
 
-  _add.backward();
+  add.backward();
 }

@@ -63,13 +63,17 @@ public:
   
   // check whether the output tensor should requires_grad on or not
   bool isGradOn(const Tensor* other) const;
-  
+ 
+
+  void backward(const Tensor& tensor, const af::array& output_grad);  
   /*
-  * backward pass 
-    genarate the gradients
+  * kik off the backward pass 
   */
   void backward();
+  
+  void grad() const;
 
+  void addBackward(const af::array& output_grad);
 private:   
   /*
   * tensor data stored in here
@@ -79,6 +83,7 @@ private:
     bool requires_grad{false}; // does this variable calculate the grads
     std::vector<Tensor> parents; // parents of this variable
     std::vector<af::array> grad; // gradient of the variable
+    bool visited{false};
   }; 
 
   std::shared_ptr<tensorData> tensorData_{std::make_shared<tensorData>()};
