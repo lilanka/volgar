@@ -3,7 +3,7 @@
 Similar to the PyTorch. Currently only supports for C++. 
 
 ## Modules  
-```
+```shell
 falcon/autograd = Computes gradients of the functions
 
 **TODO:**
@@ -13,7 +13,7 @@ falcon/Conv
 ```
 
 ## Example  
-```
+```c++
 #include <arrayfire.h>
 
 #include "falcon/falcon.h"
