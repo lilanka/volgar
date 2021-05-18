@@ -1,3 +1,9 @@
+/*
+  todo:
+    hash table is more computationaly efficient 
+    current use linked lists. use adjescent list with hash tables  
+*/
+
 #pragma once 
 
 #include <arrayfire.h>
@@ -31,11 +37,6 @@ public:
   af::array& array() const;
  
   /*
-  * set up parents
-  */
-  std::vector<Tensor> parentSetUp(const Tensor* other);  
-
-  /*
   * adds two input tensors
   */
   Tensor operator+(const Tensor& tensor);
@@ -64,7 +65,8 @@ public:
   bool isGradOn(const Tensor* other) const;
   
   /*
-  * backward pass
+  * backward pass 
+    genarate the gradients
   */
   void backward();
 

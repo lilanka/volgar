@@ -8,5 +8,4 @@ class Add {
 public:
   Add() = default;
   Tensor forward(const Tensor& a, const Tensor& b);    
-  void backward(const Tensor& a, const Tensor& b);
 };
