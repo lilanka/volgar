@@ -28,14 +28,19 @@ Tensor x1 = Tensor(a, true);
 Tensor x2 = Tensor(b, true);
 Tensor x3 = Tensor(c, false);
 
-Tensor y1 = x1 + x2;
-Tensor y2 = x1 - x2;
-Tensor add = y1 + y2;
+Tensor y1 = x1 + x2 + (x2 - x1) * 4.5;
 
 af_print(y1.array());
-af_print(y2.array());
 
-af_print(add.array());
+y1.backward(); // Backward propagation
+```
 
-add.backward(); // Backward propagation
+## Test 
+```shell
+git clone https://github.com/lilanka/Falcon.git
+cd Falcon
+mkdir build && cd build
+cmake ..
+make 
+./falcon
 ```

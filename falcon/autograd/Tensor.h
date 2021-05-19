@@ -3,7 +3,6 @@
     hash table is more computationaly efficient 
     current use linked lists. use adjescent list with hash tables  
 */
-
 #pragma once 
 
 #include <arrayfire.h>
@@ -29,7 +28,12 @@ public:
   /*
   * for inside tensor genration
   */
-  Tensor(af::array data, std::vector<Tensor> parents, bool requires_data);
+  Tensor(af::array data, std::vector<Tensor> parents, bool requires_data, int _op);
+
+  /*
+  * constructor with op: grad function , mul: use when operations with scalar values
+  */
+  Tensor(af::array data, std::vector<Tensor> parents, bool requires_data, float _mul, int _op);
 
   /*
   * output arrayfire array
@@ -64,26 +68,47 @@ public:
   // check whether the output tensor should requires_grad on or not
   bool isGradOn(const Tensor* other) const;
  
-
+  /*
+  * DFS
+  */
   void backward(const Tensor& tensor, const af::array& output_grad);  
+
   /*
   * kik off the backward pass 
   */
-  void backward();
-  
-  void grad() const;
+  void backward(af::array initial_grad);
 
-  void addBackward(const af::array& output_grad);
+  // show the grad 
+  void grad() const; 
+
+  /*
+  * gradient calculation functions in each operation
+  */
+  void addBackward(const af::array& output_grad) const;
+  void subBackward(const af::array& output_grad) const;
+  void divBackward(const af::array& output_grad) const;
+  void mulBackward(const af::array& output_grad) const;
+  void matmulBackward(const af::array& output_grad) const; 
+
+  // shows the nodes meaning (correspodning operation in the node)
+  void gradFn(); 
+
+  /*
+  * used for backward operation. call the backward functions of each operation
+  */
+  void gradOp(const Tensor& tensor, const af::array& output_grad);  
 private:   
   /*
   * tensor data stored in here
   */ 
   struct tensorData {
-    af::array data;  // data of the variable
-    bool requires_grad{false}; // does this variable calculate the grads
-    std::vector<Tensor> parents; // parents of this variable
-    std::vector<af::array> grad; // gradient of the variable
-    bool visited{false};
+    af::array data;                       // data of the variable
+    bool requires_grad{false};            // does this variable calculate the grads
+    std::vector<Tensor> parents;          // parents of this variable
+    std::vector<af::array> grad;          // gradient of output w.r.t this tensor 
+    bool visited{false};                  // marked as visited in DFS
+    std::unique_ptr<float> _mul{nullptr}; // used when multiplication or pow with scalar
+    std::unique_ptr<int> _op{nullptr};    // operation (gradFn) 
   }; 
 
   std::shared_ptr<tensorData> tensorData_{std::make_shared<tensorData>()};
