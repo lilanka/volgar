@@ -3,5 +3,5 @@
 Tensor Matmul::forward(const Tensor& a, const Tensor& b) {
   std::vector<Tensor> parents;
   parents.insert(parents.end(), {a, b});
-  return Tensor(af::matmulTN(a.array(), b.array()), parents, a.isGradOn(&b), 4);
+  return Tensor(af::matmul(a.array(), b.array()), parents, a.isGradOn(&b), 4);
 }

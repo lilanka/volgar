@@ -16,8 +16,8 @@ Tensor::Tensor(af::array data, std::vector<Tensor> parents, bool requires_grad, 
   tensorData_->parents = std::move(parents); 
   tensorData_->_op = std::make_unique<int>(std::move(_op));
   if (requires_grad) {
-    for (Tensor& _: tensorData_->parents)
-      tensorData_->grad.push_back(af::constant(0, tensorData_->data.dims()));
+    for (Tensor& parent: tensorData_->parents)
+      tensorData_->grad.push_back(af::constant(0, parent.array().dims()));
   }
 }
 
@@ -28,8 +28,8 @@ Tensor::Tensor(af::array data, std::vector<Tensor> parents, bool requires_grad, 
   tensorData_->_op = std::make_unique<int>(std::move(_op));
   tensorData_->_mul = std::make_unique<float>(std::move(_mul));
   if (requires_grad) {
-    for (Tensor& _: tensorData_->parents)
-      tensorData_->grad.push_back(af::constant(0, tensorData_->data.dims()));
+    for (Tensor& parent: tensorData_->parents)
+      tensorData_->grad.push_back(af::constant(0, parent.array().dims()));
   }
 }
 bool Tensor::isGradOn(const Tensor* other) const {
@@ -92,7 +92,7 @@ void Tensor::gradOp(const Tensor& tensor, const af::array& output_grad) {
     case 1: tensor.subBackward(output_grad); break;
     case 2: tensor.divBackward(output_grad); break;
     case 3: tensor.mulBackward(output_grad); break;
-    //case 4: tensor.matmulBackward(output_grad); break;
+    case 4: tensor.matmulBackward(output_grad); break;
   }
 }
 
@@ -120,14 +120,10 @@ void Tensor::divBackward(const af::array& output_grad) const {
     tensorData_->grad[i] += output_grad / (*tensorData_->_mul);
   }
 }
-// look for partial derivative of tensor dot product
-/*
-void Tensor::matmulBackward(const af::array& output_grad) {
-  for (int i=0; i < tensorData_->parents.size(); i++) {
-    tensorData_->grad[i] += af::matmulTN(tensorData_->
-  }
+
+void Tensor::matmulBackward(const af::array& output_grad) const {
+  tensorData_->grad[1] += af::matmul(af::transpose(tensorData_->parents[0].array()), output_grad);
 }
-*/
 
 void Tensor::backward(const Tensor& tensor, const af::array& output_grad) {
   if (tensor.tensorData_->visited || 
