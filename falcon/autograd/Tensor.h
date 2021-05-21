@@ -51,10 +51,14 @@ public:
   Tensor operator-(const Tensor& tensor);
 
   /*
-  * multiply input tensor and a number
+  * element wise multiplication 
   */
   Tensor operator*(const float num);
 
+  /*
+  * element wise multiplication of two tensors 
+  */
+  Tensor operator*(const Tensor& tensor);
   /*
   * divide input tensor and a number
   */
@@ -78,6 +82,7 @@ public:
   */
   void backward(af::array initial_grad);
 
+  void backward();
   // show the grad 
   void grad() const; 
 
@@ -87,8 +92,9 @@ public:
   void addBackward(const af::array& output_grad) const;
   void subBackward(const af::array& output_grad) const;
   void divBackward(const af::array& output_grad) const;
-  void mulBackward(const af::array& output_grad) const;
+  void mulBackward0(const af::array& output_grad) const;
   void matmulBackward(const af::array& output_grad) const; 
+  void mulBackward1(const af::array& output_grad) const;
 
   // shows the nodes meaning (correspodning operation in the node)
   void gradFn(); 

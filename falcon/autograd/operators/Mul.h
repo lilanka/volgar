@@ -8,4 +8,5 @@ class Mul {
 public:
   Mul() = default;
   Tensor forward(const Tensor& a, const float b);
+  Tensor forward(const Tensor& a, const Tensor& b);
 };
