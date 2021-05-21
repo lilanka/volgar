@@ -1,9 +1,11 @@
 #include "falcon/autograd/Tensor.h"
-#include "falcon/autograd/operators/operators.h"
+#include "falcon/autograd/Functional.h"
 
 #include <iostream>
 
 namespace Falcon {
+
+F f;
 
 Tensor::Tensor(af::array data, bool requires_grad) {
   tensorData_->data = std::move(data);
@@ -50,32 +52,26 @@ void Tensor::grad() const {
 }
 
 Tensor Tensor::operator+(const Tensor& tensor) {
-  Add add;
-  return add.forward(*this, tensor);
+  return f.add(*this, tensor);
 }
 Tensor Tensor::operator-(const Tensor& tensor) {
-  Sub sub;
-  return sub.forward(*this, tensor);
+  return f.sub(*this, tensor);
 }
 
 Tensor Tensor::operator*(const float num) {
-  Mul mul;
-  return mul.forward(*this, num);
+  return f.mul0(*this, num);
 }
 
 Tensor Tensor::operator*(const Tensor& tensor) {
-  Mul mul;
-  return mul.forward(*this, tensor);
+  return f.mul1(*this, tensor);
 }
 
 Tensor Tensor::operator/(const float num) {
-  Div div;
-  return div.forward(*this, num);
+  return f.div(*this, num);
 }
 
 Tensor Tensor::matmul(const Tensor& tensor) {
-  Matmul _matmul;
-  return _matmul.forward(*this, tensor);
+  return f.matmul(*this, tensor);
 }
 
 void Tensor::gradFn() {

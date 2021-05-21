@@ -6,7 +6,7 @@
 using namespace Falcon;
 
 int main() {
-  /*
+
   af::array a = af::constant(1, 5, 5);
   af::array b = af::constant(2, 5, 5);
   af::array c = af::constant(3, 5, 10);
@@ -27,6 +27,10 @@ int main() {
 
   Tensor add_dot = x1 + x2 - (x1.matmul(x2));
 
+  F m;
+  Tensor p = m.add(x1, x2);
+  
+  af_print(p.array());
   af_print(y1.array());
   af_print(y2.array());
   af_print(y3.array());
@@ -48,9 +52,9 @@ int main() {
 
   y5.backward();  
   y5.gradFn();
-  */
-  af::array a = {0, 1, 2, 3, 4}; 
-  Tensor x = Tensor(a, true);
+
+  af::array f = {0, 1, 2, 3, 4}; 
+  Tensor x = Tensor(f, true);
   Tensor y = x * x;
   y.backward();
   y.grad();
