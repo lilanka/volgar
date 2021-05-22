@@ -35,3 +35,9 @@ Tensor F::sub(const Tensor& a, const Tensor& b) {
   parents.insert(parents.end(), {a, b});
   return Tensor(a.array() - b.array(), parents, a.isGradOn(&b), 1);
 }
+
+Tensor F::relu(const Tensor& a) {
+  std::vector<Tensor> parents;
+  parents.insert(parents.end(), {a});
+  return Tensor(af::max(a.array(), af::constant(0, a.array().dims())), parents, a.isGradOn(nullptr), 7);
+}

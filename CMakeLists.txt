@@ -11,4 +11,6 @@ add_executable(falcon ${SOURCE})
 find_package(ArrayFire)
 target_link_libraries(falcon ArrayFire::afcpu)
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+include_directories(
+  ${CMAKE_CURRENT_SOURCE_DIR}
+  )

@@ -6,7 +6,6 @@
 using namespace Falcon;
 
 int main() {
-
   af::array a = af::constant(1, 5, 5);
   af::array b = af::constant(2, 5, 5);
   af::array c = af::constant(3, 5, 10);
@@ -58,4 +57,9 @@ int main() {
   Tensor y = x * x;
   y.backward();
   y.grad();
+
+  Tensor relu = x1 * m.relu(x2);
+  af_print(relu.array());
+  relu.backward();
+  
 }
