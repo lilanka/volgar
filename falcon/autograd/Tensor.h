@@ -84,7 +84,7 @@ public:
 
   void backward();
   // show the grad 
-  void grad() const; 
+  af::array grad() const; 
 
   /*
   * gradient calculation functions in each operation
@@ -115,7 +115,7 @@ private:
     af::array data;                       // data of the variable
     bool requires_grad{false};            // does this variable calculate the grads
     std::vector<Tensor> parents;          // parents of this variable
-    std::vector<af::array> grad;          // gradient of output w.r.t this tensor 
+    std::unique_ptr<af::array> grad{nullptr}; // gradient of output w.r.t this tensor 
     bool visited{false};                  // marked as visited in DFS
     std::unique_ptr<float> _mul{nullptr}; // used when multiplication or pow with scalar
     std::unique_ptr<int> _op{nullptr};    // operation (gradFn) 

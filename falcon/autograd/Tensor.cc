@@ -3,6 +3,7 @@
 
 #include <iostream>
 
+int count = 0;
 namespace Falcon {
 
 F f;
@@ -10,6 +11,8 @@ F f;
 Tensor::Tensor(af::array data, bool requires_grad) {
   tensorData_->data = std::move(data);
   tensorData_->requires_grad = requires_grad;
+  if (requires_grad)
+    tensorData_->grad = std::make_unique<af::array>(af::constant(0, tensorData_->data.dims()));
 }
 
 Tensor::Tensor(af::array data, std::vector<Tensor> parents, bool requires_grad, int _op) {
@@ -18,8 +21,7 @@ Tensor::Tensor(af::array data, std::vector<Tensor> parents, bool requires_grad, 
   tensorData_->parents = std::move(parents); 
   tensorData_->_op = std::make_unique<int>(std::move(_op));
   if (requires_grad) {
-    for (Tensor& parent: tensorData_->parents)
-      tensorData_->grad.push_back(af::constant(0, parent.array().dims()));
+    tensorData_->grad = std::make_unique<af::array>(af::constant(0, tensorData_->data.dims()));
   }
 }
 
@@ -30,8 +32,7 @@ Tensor::Tensor(af::array data, std::vector<Tensor> parents, bool requires_grad, 
   tensorData_->_op = std::make_unique<int>(std::move(_op));
   tensorData_->_mul = std::make_unique<float>(std::move(_mul));
   if (requires_grad) {
-    for (Tensor& parent: tensorData_->parents)
-      tensorData_->grad.push_back(af::constant(0, parent.array().dims()));
+    tensorData_->grad = std::make_unique<af::array>(af::constant(0, tensorData_->data.dims()));
   }
 }
 bool Tensor::isGradOn(const Tensor* other) const {
@@ -43,12 +44,8 @@ af::array& Tensor::array() const {
   return tensorData_->data;
 }
 
-void Tensor::grad() const {
-  af::array total = af::constant(0, tensorData_->grad[0].dims());
-  for (af::array& grad : tensorData_->grad) {
-    total += grad;
-  }
-  af_print(total);
+af::array Tensor::grad() const {
+  return *tensorData_->grad;
 }
 
 Tensor Tensor::operator+(const Tensor& tensor) {
@@ -101,56 +98,68 @@ void Tensor::gradOp(const Tensor& tensor, const af::array& output_grad) {
 }
 
 void Tensor::reluBackward(const af::array& output_grad) const {
-  tensorData_->grad[0] += output_grad * (tensorData_->parents[0].array() > tensorData_->grad[0]);
-}
-
-void Tensor::sigmoidBackward(const af::array& output_grad) const {
-  tensorData_->grad[0] += output_grad * (array() * (af::constant(1, array().dims()) - array()));
-}
-void Tensor::addBackward(const af::array& output_grad) const {
-  for (int i=0; i < tensorData_->parents.size(); i++) {
-    tensorData_->grad[i] += output_grad;
+  for (Tensor& parent: tensorData_->parents) {
+    if (parent.tensorData_->requires_grad)
+      *parent.tensorData_->grad += output_grad * (parent.array() > *parent.tensorData_->grad);
   }
 }
 
+void Tensor::sigmoidBackward(const af::array& output_grad) const {
+  for (Tensor& parent: tensorData_->parents) {
+    if (parent.tensorData_->requires_grad)
+      *parent.tensorData_->grad += output_grad * (array() * (af::constant(1, array().dims()) - array()));
+  }
+}
+void Tensor::addBackward(const af::array& output_grad) const {
+  for (Tensor& parent: tensorData_->parents) {
+    if (parent.tensorData_->requires_grad)
+      *parent.tensorData_->grad += output_grad;
+  }
+}
 void Tensor::mulBackward1(const af::array& output_grad) const {
-    tensorData_->grad[0] += tensorData_->parents[1].array()*output_grad;
-    tensorData_->grad[1] += tensorData_->parents[0].array()*output_grad;
+  std::vector<Tensor> parents = tensorData_->parents;
+  *parents[0].tensorData_->grad += parents[1].array() * output_grad;
+  *parents[1].tensorData_->grad += parents[0].array() * output_grad;
 }
 void Tensor::subBackward(const af::array& output_grad) const{
-  for (int i=0; i < tensorData_->parents.size(); i++) {
-    tensorData_->grad[i] += output_grad;
+  for (Tensor& parent: tensorData_->parents) {
+    if (parent.tensorData_->requires_grad)
+      *parent.tensorData_->grad += output_grad;
   }
 }
 
 void Tensor::mulBackward0(const af::array& output_grad) const {
-    tensorData_->grad[0] += output_grad * (*tensorData_->_mul);
+  std::vector<Tensor> parent = tensorData_->parents;
+  af_print(output_grad);
+  *parent[0].tensorData_->grad += output_grad * (*tensorData_->_mul);
+  af_print(*parent[0].tensorData_->grad);
 }
 
 void Tensor::divBackward(const af::array& output_grad) const {
-    tensorData_->grad[0] += output_grad / (*tensorData_->_mul);
+  std::vector<Tensor> parent = tensorData_->parents;
+  *parent[0].tensorData_->grad += output_grad / (*tensorData_->_mul);
 }
 
 void Tensor::matmulBackward(const af::array& output_grad) const {
-  tensorData_->grad[1] += af::matmul(af::transpose(tensorData_->parents[0].array()), output_grad);
+  std::vector<Tensor> parents = tensorData_->parents;
+  *parents[0].tensorData_->grad += af::matmul(af::transpose(parents[0].array()), output_grad);
 }
 
 void Tensor::backward(const Tensor& tensor, const af::array& output_grad) {
-  if (tensor.tensorData_->visited || 
-      !(tensor.tensorData_->requires_grad) || 
-      tensor.tensorData_->parents.size() == 0) { return; };
-
+  if (tensor.tensorData_->visited || tensor.tensorData_->parents.size() == 0) {return;}
   tensor.tensorData_->visited = {true};
   gradOp(tensor, output_grad);
-  for (int i=0; i< tensor.tensorData_->parents.size(); i++) {   
-    backward(tensor.tensorData_->parents[i], tensor.tensorData_->grad[i]);
+  for (Tensor& parent: tensor.tensorData_->parents) {  
+    backward(parent, *parent.tensorData_->grad);
   }
 }
 void Tensor::backward(af::array initial_grad) {
-  backward(*this, std::move(initial_grad));
+  tensorData_->grad = std::make_unique<af::array>(std::move(initial_grad));
+  backward(*this, *tensorData_->grad);
 }
 
 void Tensor::backward() {
-  backward(*this, af::constant(1, array().dims()));
+  tensorData_->grad = std::make_unique<af::array>(af::constant(1, array().dims()));
+  backward(*this, *tensorData_->grad);
 }
 }

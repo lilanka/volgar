@@ -6,33 +6,39 @@ Similar to the PyTorch. Currently only supports for C++.
 ```shell
 falcon/autograd = Computes gradients of the functions
 
-**TODO:**
+**TODO**
 falcon/optim 
 falcon/nn
 falcon/Conv
 ```
 
 ## Example  
+This is how PyTorch does it
+```python
+import torch
+
+a = torch.tensor([2., 3.], requires_grad=True)
+b = torch.tensor([6., 4.], requires_grad=True)
+
+Q = 3*a**3 - b**2
+external_grad = torch.tensor([1., 1.])
+Q.backward(gradient=external_grad)
+```
+
+This is how Falcon does it
 ```c++
 #include <arrayfire.h>
-
 #include "falcon/falcon.h"
 
 using namespace Falcon;
 
-af::array a = af::constant(1, 5, 5);
-af::array b = af::constant(1, 5, 5);
-af::array c = af::constant(1, 5, 10);
+Tensor aa = Tensor({2, 3}, true);
+Tensor bb = Tensor({6, 4}, true);
 
-Tensor x1 = Tensor(a, true);
-Tensor x2 = Tensor(b, true);
-Tensor x3 = Tensor(c, false);
+Tensor Q = aa*aa*aa*3 - bb*bb; // TODO: add pow
 
-Tensor y1 = x1 + x2 + (x2 - x1) * 4.5;
-
-af_print(y1.array());
-
-y1.backward(); // Backward propagation
+Q.backward({1, 1});
+af_print(aa.grad());
 ```
 
 ## Test 
