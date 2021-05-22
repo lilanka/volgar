@@ -38,7 +38,6 @@ Tensor bb = Tensor({6, 4}, true);
 Tensor Q = aa*aa*aa*3 - bb*bb; // TODO: add pow
 
 Q.backward({1, 1});
-af_print(aa.grad());
 ```
 
 ## Test 

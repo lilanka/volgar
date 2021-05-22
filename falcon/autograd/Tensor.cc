@@ -130,9 +130,7 @@ void Tensor::subBackward(const af::array& output_grad) const{
 
 void Tensor::mulBackward0(const af::array& output_grad) const {
   std::vector<Tensor> parent = tensorData_->parents;
-  af_print(output_grad);
   *parent[0].tensorData_->grad += output_grad * (*tensorData_->_mul);
-  af_print(*parent[0].tensorData_->grad);
 }
 
 void Tensor::divBackward(const af::array& output_grad) const {
@@ -141,8 +139,7 @@ void Tensor::divBackward(const af::array& output_grad) const {
 }
 
 void Tensor::matmulBackward(const af::array& output_grad) const {
-  std::vector<Tensor> parents = tensorData_->parents;
-  *parents[0].tensorData_->grad += af::matmul(af::transpose(parents[0].array()), output_grad);
+  //*parents[0].tensorData_->grad += af::matmul(af::transpose(parents[0].array()), output_grad);
 }
 
 void Tensor::backward(const Tensor& tensor, const af::array& output_grad) {
