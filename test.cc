@@ -58,8 +58,9 @@ int main() {
   y.backward();
   y.grad();
 
-  Tensor relu = x1 * m.relu(x2);
+  Tensor relu = m.relu(x2);
   af_print(relu.array());
   relu.backward();
+  relu.grad();
   
 }
