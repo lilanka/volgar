@@ -1,3 +1,5 @@
+// This is a test file of development. A serious, series of mess :)
+
 #include <iostream>
 #include <arrayfire.h>
 
@@ -58,9 +60,13 @@ int main() {
   y.backward();
   y.grad();
 
-  Tensor relu = m.relu(x2);
+  Tensor test_ = Tensor({-8.0, 8.0, 0.1}, true);
+  Tensor relu = m.relu(test_);
   af_print(relu.array());
   relu.backward();
   relu.grad();
   
+  Tensor sigmoid = m.sigmoid(test_);
+  sigmoid.backward();
+  sigmoid.grad();
 }

@@ -27,3 +27,9 @@ Tensor F::sub(const Tensor& a, const Tensor& b) {
 Tensor F::relu(const Tensor& a) {
   return Tensor(af::max(a.array(), af::constant(0, a.array().dims())), {a}, a.isGradOn(nullptr), 7);
 }
+
+Tensor F::sigmoid(const Tensor& a) {
+  af::array ones_ = af::constant(1, a.array().dims());
+  af::array sig_ =  ones_ / (ones_ + af::exp((-1) * a.array()));
+  return Tensor(sig_, {a}, a.isGradOn(nullptr), 8);
+}

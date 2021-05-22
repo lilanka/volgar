@@ -1,5 +1,5 @@
 /*
-  todo:
+/ todo:
     hash table is more computationaly efficient 
     current use linked lists. use adjescent list with hash tables  
 */
@@ -95,7 +95,10 @@ public:
   void mulBackward0(const af::array& output_grad) const;
   void matmulBackward(const af::array& output_grad) const; 
   void mulBackward1(const af::array& output_grad) const;
+  
+  // for activation functions
   void reluBackward(const af::array& output_grad) const;
+  void sigmoidBackward(const af::array& output_grad) const;
 
   // shows the nodes meaning (correspodning operation in the node)
   void gradFn(); 
