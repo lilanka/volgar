@@ -24,6 +24,11 @@ Tensor F::sub(const Tensor& a, const Tensor& b) {
   return Tensor(a.array() - b.array(), {a, b}, a.isGradOn(&b), 1);
 }
 
+Tensor F::pow(const Tensor& a, const float b) {
+  return Tensor(af::pow(a.array(), b), {a}, a.isGradOn(nullptr), b, 5);
+}
+
+
 Tensor F::relu(const Tensor& a) {
   return Tensor(af::max(a.array(), af::constant(0, a.array().dims())), {a}, a.isGradOn(nullptr), 7);
 }

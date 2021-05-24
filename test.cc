@@ -11,7 +11,9 @@ int main() {
   Tensor aa = Tensor({2, 3}, true);
   Tensor bb = Tensor({6, 4}, true);
 
-  Tensor Q = aa*aa*aa*3 - bb*bb;
-
+  Tensor Q = (aa^3)*3 - (bb^2);
   Q.backward({1, 1});
+
+  af_print(aa.grad());
+  af_print(bb.grad());
 }

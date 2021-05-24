@@ -65,9 +65,16 @@ public:
   Tensor operator/(const float num); 
 
   /*
+  * Taking power of a tensor
+  */
+  Tensor operator^(const float num);
+
+  /*
   * dot product of two tensors
   */
   Tensor matmul(const Tensor& tensor);
+
+
   
   // check whether the output tensor should requires_grad on or not
   bool isGradOn(const Tensor* other) const;
@@ -95,6 +102,7 @@ public:
   void mulBackward0(const af::array& output_grad) const;
   void matmulBackward(const af::array& output_grad) const; 
   void mulBackward1(const af::array& output_grad) const;
+  void powBackward(const af::array& output_grad) const;
   
   // for activation functions
   void reluBackward(const af::array& output_grad) const;

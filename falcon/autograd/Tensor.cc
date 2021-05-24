@@ -67,6 +67,10 @@ Tensor Tensor::operator/(const float num) {
   return f.div(*this, num);
 }
 
+Tensor Tensor::operator^(const float num) {
+  return f.pow(*this, num);
+}
+
 Tensor Tensor::matmul(const Tensor& tensor) {
   return f.matmul(*this, tensor);
 }
@@ -78,6 +82,7 @@ void Tensor::gradFn() {
     case 2: std::cout << "divBackward()" << std::endl; break;
     case 3: std::cout << "mulBackward0()" << std::endl; break;
     case 4: std::cout << "matmulBackward()" << std::endl; break;
+    case 5: std::cout << "powBackward()" << std::endl; break;
     case 6: std::cout << "mulBackward1()" << std::endl; break;
     case 7: std::cout << "reluBackward()" << std::endl; break;
     case 8: std::cout << "sigmoidBackward()" << std::endl; break;
@@ -91,6 +96,7 @@ void Tensor::gradOp(const Tensor& tensor, const af::array& output_grad) {
     case 2: tensor.divBackward(output_grad); break;
     case 3: tensor.mulBackward0(output_grad); break;
     case 4: tensor.matmulBackward(output_grad); break;
+    case 5: tensor.powBackward(output_grad); break;
     case 6: tensor.mulBackward1(output_grad); break;
     case 7: tensor.reluBackward(output_grad); break;
     case 8: tensor.sigmoidBackward(output_grad); break;
@@ -131,6 +137,11 @@ void Tensor::subBackward(const af::array& output_grad) const{
 void Tensor::mulBackward0(const af::array& output_grad) const {
   std::vector<Tensor> parent = tensorData_->parents;
   *parent[0].tensorData_->grad += output_grad * (*tensorData_->_mul);
+}
+
+void Tensor::powBackward(const af::array& output_grad) const {
+  std::vector<Tensor> parent = tensorData_->parents;
+  *parent[0].tensorData_->grad += output_grad * (*tensorData_->_mul * (af::pow(parent[0].array(), *tensorData_->_mul - 1)));
 }
 
 void Tensor::divBackward(const af::array& output_grad) const {

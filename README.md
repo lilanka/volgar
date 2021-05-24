@@ -35,7 +35,7 @@ using namespace Falcon;
 Tensor aa = Tensor({2, 3}, true);
 Tensor bb = Tensor({6, 4}, true);
 
-Tensor Q = aa*aa*aa*3 - bb*bb; // TODO: add pow
+Tensor Q = (aa^3)*3 - (bb^2);
 
 Q.backward({1, 1});
 ```
