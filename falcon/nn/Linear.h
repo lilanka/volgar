@@ -1,29 +1,37 @@
+#pragma once
+
 #include <arrayfire.h> 
+#include <memory>
+#include <vector>
 
 #include "falcon/tensor/Tensor.h"
 
-using namespace Tensor;
 namespace Falcon {
 
 class Linear {
 public:
   /*
-  * setup layer bias = false
-  */
-  Linear(int in_, out_);
-
-  /*
   *   set up the linear layer
   */
-  Linear(int in_, int out_, bool bias);  
+  Linear(int in_, int out_, bool bias_);  
 
   /*
-  *  Outputs the parameters of the layer  
+  * oprations inside the node
   */
-  Tensor parameters();
+  Tensor operator()(const Tensor& inputs); 
+
+  /*
+  *  Outputs the weights and bias of the layer  
+  */
+  Tensor weights();
+  Tensor bias();
 
 private:
-  bool bias{false};
-  std::vector<af::array<af::array>> Jocob;
+  struct layerData {
+    std::unique_ptr<Tensor> bias{nullptr};              // bias 
+    std::unique_ptr<Tensor> params{nullptr};            // weights initialized 
+    //std::vector<af::array<af::array>> Jocob{nullptr};   // layers jacobian matrix
+  };
+  std::shared_ptr<layerData> layerData_{std::make_shared<layerData>()};
 };
-}
+} // namespace falcon

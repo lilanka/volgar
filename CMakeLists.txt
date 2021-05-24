@@ -4,7 +4,9 @@ project(Falcon)
 set(SOURCE
   ${PROJECT_SOURCE_DIR}/falcon/tensor/Tensor.cc
   ${PROJECT_SOURCE_DIR}/falcon/autograd/Functional.cc
-  ${PROJECT_SOURCE_DIR}/test.cc
+  ${PROJECT_SOURCE_DIR}/falcon/nn/Linear.cc
+  ${PROJECT_SOURCE_DIR}/test/linear.cc
+  #${PROJECT_SOURCE_DIR}/test/operations.cc
 )
 add_executable(falcon ${SOURCE})
 
