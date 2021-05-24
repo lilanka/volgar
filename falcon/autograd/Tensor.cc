@@ -45,6 +45,8 @@ af::array& Tensor::array() const {
 }
 
 af::array Tensor::grad() const {
+  if (!tensorData_->requires_grad)
+    throw std::invalid_argument {"Gradient calculation deosn't allowed!"};
   return *tensorData_->grad;
 }
 
@@ -150,7 +152,8 @@ void Tensor::divBackward(const af::array& output_grad) const {
 }
 
 void Tensor::matmulBackward(const af::array& output_grad) const {
-  //*parents[0].tensorData_->grad += af::matmul(af::transpose(parents[0].array()), output_grad);
+  std::vector<Tensor> parent = tensorData_->parents;
+  *parent[1].tensorData_->grad += af::matmulTN(parent[0].array(), output_grad);
 }
 
 void Tensor::backward(const Tensor& tensor, const af::array& output_grad) {

@@ -1,5 +1,5 @@
 #include "falcon/autograd/Functional.h"
-
+#include <iostream>
 Tensor F::add(const Tensor& a, const Tensor& b) {
   return Tensor(a.array() + b.array(), {a, b}, a.isGradOn(&b), 0);
 }
