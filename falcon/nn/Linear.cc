@@ -1,6 +1,10 @@
 #include "falcon/nn/Linear.h"
 
-Linear::Linear(int in_nodes, int out_nodes, bool bias) {
-  bias = bias; 
+Linear::Linear(int in_, int out_) {
   
+}
+
+Linear::Linear(int in_, int out_, bool bias) {
+  bias = bias; 
+   
 }

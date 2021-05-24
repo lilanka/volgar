@@ -1,7 +1,7 @@
 #pragma once 
 
 #include <arrayfire.h>
-#include "falcon/autograd/Tensor.h"
+#include "falcon/tensor/Tensor.h"
 
 using namespace Falcon;
 class F {

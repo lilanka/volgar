@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.20)
 project(Falcon)
 
 set(SOURCE
-  ${PROJECT_SOURCE_DIR}/falcon/autograd/Tensor.cc
+  ${PROJECT_SOURCE_DIR}/falcon/tensor/Tensor.cc
   ${PROJECT_SOURCE_DIR}/falcon/autograd/Functional.cc
   ${PROJECT_SOURCE_DIR}/test.cc
 )

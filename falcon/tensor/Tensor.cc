@@ -1,9 +1,8 @@
-#include "falcon/autograd/Tensor.h"
+#include "falcon/tensor/Tensor.h"
 #include "falcon/autograd/Functional.h"
 
 #include <iostream>
 
-int count = 0;
 namespace Falcon {
 
 F f;
