@@ -6,9 +6,9 @@
 using namespace Falcon;
 
 int main() {
-  Linear l1 = Linear(4, 3, false);
+  Linear l1 = Linear(4, 3, true);
 
-  Tensor inputs = Tensor(af::randu(100, 4), false);
+  Tensor inputs = Tensor(af::randu(1, 4), false);
   Tensor l1_out = l1(inputs); 
 
   af_print(l1_out.array());

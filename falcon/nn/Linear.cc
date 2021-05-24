@@ -2,6 +2,8 @@
 #include "falcon/tensor/Distributions.h"
 #include "falcon/autograd/Functional.h"
 
+#include <iostream>
+
 namespace Falcon {
 
 Linear::Linear(int in_, int out_, bool bias_) {
@@ -14,8 +16,8 @@ Linear::Linear(int in_, int out_, bool bias_) {
 
 Tensor Linear::operator()(const Tensor& inputs) {
   F f;
-  Tensor out = f.matmul(inputs, *layerData_->params);
-  return out;
+  Tensor out = f.matmul(inputs, *layerData_->params) + *layerData_->bias;
+  return out; // each value is a node. 
 }
 
 Tensor Linear::weights() {
