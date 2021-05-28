@@ -107,6 +107,7 @@ public:
   // for activation functions
   void reluBackward(const af::array& output_grad) const;
   void sigmoidBackward(const af::array& output_grad) const;
+  void tanhBackward(const af::array& output_grad) const;
 
   // shows the nodes meaning (correspodning operation in the node)
   void gradFn(); 

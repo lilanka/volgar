@@ -38,3 +38,8 @@ Tensor F::sigmoid(const Tensor& a) {
   af::array sig_ =  ones_ / (ones_ + af::exp((-1) * a.array()));
   return Tensor(sig_, {a}, a.isGradOn(nullptr), 8);
 }
+
+Tensor F::tanh(const Tensor& a) {
+  af::array exp_ = af::exp((-1) * a.array());
+  return Tensor((1 - exp_) / (1 + exp_), {a}, a.isGradOn(nullptr), 9);
+}

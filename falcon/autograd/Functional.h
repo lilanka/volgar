@@ -18,4 +18,5 @@ public:
   /* --------------------- activation functions ----------------*/
   Tensor relu(const Tensor& a);
   Tensor sigmoid(const Tensor& a);
+  Tensor tanh(const Tensor& a);
 };

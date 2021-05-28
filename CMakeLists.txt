@@ -15,4 +15,9 @@ target_link_libraries(falcon ArrayFire::afcpu)
 
 include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}
+)
+
+add_subdirectory(extern/pybind11)
+pybind11_add_module(pyfalcon 
+  ${PROJECT_SOURCE_DIR}/test/pytest.cc
   )

@@ -87,6 +87,7 @@ void Tensor::gradFn() {
     case 6: std::cout << "mulBackward1()" << std::endl; break;
     case 7: std::cout << "reluBackward()" << std::endl; break;
     case 8: std::cout << "sigmoidBackward()" << std::endl; break;
+    case 9: std::cout << "tanhBackward()" << std::endl; break;
   }
 }
 
@@ -101,6 +102,7 @@ void Tensor::gradOp(const Tensor& tensor, const af::array& output_grad) {
     case 6: tensor.mulBackward1(output_grad); break;
     case 7: tensor.reluBackward(output_grad); break;
     case 8: tensor.sigmoidBackward(output_grad); break;
+    case 9: tensor.tanhBackward(output_grad); break;
   }
 }
 
@@ -115,6 +117,13 @@ void Tensor::sigmoidBackward(const af::array& output_grad) const {
   for (Tensor& parent: tensorData_->parents) {
     if (parent.tensorData_->requires_grad)
       *parent.tensorData_->grad += output_grad * (array() * (af::constant(1, array().dims()) - array()));
+  }
+}
+
+void Tensor::tanhBackward(const af::array& output_grad) const {
+  for (Tensor& parent: tensorData_->parents) {
+    if (parent.tensorData_->requires_grad)
+      *parent.tensorData_->grad += output_grad * (1 - array() * array());
   }
 }
 void Tensor::addBackward(const af::array& output_grad) const {
