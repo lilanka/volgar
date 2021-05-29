@@ -1,11 +1,14 @@
 # Falcon : A Deeplearning Framework.
 
-Similar to the PyTorch. Currently only supports for C++. 
+This project is to get deep understanding of field of AI. Currently only supports for C++.  
+In development just out of curiosity. Use cases are similar to PyTorch DL framework.  
+This is a journey. I'm currently reading the textbooks recommended in ``http://www.hutter1.net/ and https://d2l.ai``    
+and implement the things I learn.  
 
 ## Modules  
 ```shell
-falcon/autograd = Computes gradients of the functions
-
+falcon/autograd: Computes gradients of the functions(Reverse-mode automatic differentiation)
+                  
 **TODO**
 falcon/optim 
 falcon/nn
