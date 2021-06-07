@@ -132,4 +132,4 @@ private:
 
   std::shared_ptr<tensorData> tensorData_{std::make_shared<tensorData>()};
 };
-}
+} // namespace Falcon

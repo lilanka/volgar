@@ -1,5 +1,3 @@
-// This is a test file of development. A serious, series of mess :)
-
 #include <iostream>
 #include <arrayfire.h>
 

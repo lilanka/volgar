@@ -17,7 +17,7 @@ Linear::Linear(int in_, int out_, bool bias_) {
 Tensor Linear::operator()(const Tensor& inputs) {
   F f;
   Tensor out = f.matmul(inputs, *layerData_->params) + *layerData_->bias;
-  return out; // each value is a node. 
+  return out; 
 }
 
 Tensor Linear::weights() {
@@ -27,4 +27,4 @@ Tensor Linear::weights() {
 Tensor Linear::bias() {
   return *layerData_->bias;
 }
-}
+} // namespace Falcon

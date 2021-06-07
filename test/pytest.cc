@@ -1,4 +1,5 @@
 #include <pybind11/pybind11.h>
+#include <arrayfire.h>
 
 namespace py = pybind11;
 

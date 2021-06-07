@@ -181,4 +181,4 @@ void Tensor::backward() {
   tensorData_->grad = std::make_unique<af::array>(af::constant(1, array().dims()));
   backward(*this, *tensorData_->grad);
 }
-}
+} // namespace Falcon

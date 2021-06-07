@@ -2,8 +2,8 @@
 
 This project is to get deep understanding of field of AI. Currently only supports for C++.  
 In development just out of curiosity. Use cases are similar to PyTorch DL framework.  
-This is a journey. I'm currently reading the textbooks recommended in ``http://www.hutter1.net/ and https://d2l.ai``    
-and implement the things I learn.  
+This is a journey. I'm currently reading the textbooks recommended in 
+``http://www.hutter1.net/ and https://d2l.ai`` and implement the things I learn.  
 
 ## Modules  
 ```shell
@@ -51,4 +51,8 @@ mkdir build && cd build
 cmake ..
 make 
 ./falcon
+```
+or 
+```
+./run.sh
 ```
