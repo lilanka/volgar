@@ -30,7 +30,6 @@ private:
   struct layerData {
     std::unique_ptr<Tensor> bias{nullptr};              // bias 
     std::unique_ptr<Tensor> params{nullptr};            // weights initialized 
-    //std::vector<af::array<af::array>> Jocob{nullptr};   // layers jacobian matrix
   };
   std::shared_ptr<layerData> layerData_{std::make_shared<layerData>()};
 };
