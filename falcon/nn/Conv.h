@@ -12,14 +12,9 @@
 
 namespace Falcon {
 
-class ConvND {
+class Conv2D {
 public:
-  ConvND(int in_channels, 
-         int out_channels, 
-         std::vector<int> kernel_size, 
-         std::vector<int> stride={}, 
-         std::vector<int> padding={}
-         bool bias=false)
+  Conv2D(int in_channels, int out_channels, std::vector<int> kernel_size, std::vector<int> stride={}, std::vector<int> padding={}, bool bias=false)
   
   Tensor Conv2D::operator()(const Tensor& input);
 
