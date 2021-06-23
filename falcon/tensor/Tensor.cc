@@ -76,6 +76,10 @@ Tensor Tensor::matmul(const Tensor& tensor) {
   return f.matmul(*this, tensor);
 }
 
+Tensor Tensor::cat(const Tensor& tensor, int dim) {
+  tensorData_->data = af::join(dim, tensorData_->data, tensor.array());
+}
+
 void Tensor::gradFn() {
   switch (*tensorData_->_op) {
     case 0: std::cout << "addBackward()" << std::endl; break;

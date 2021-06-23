@@ -74,8 +74,11 @@ public:
   */
   Tensor matmul(const Tensor& tensor);
 
+  /*
+   * concatanate two tensors
+   */
+  Tensor cat(const Tensor& tensor1, int dim);
 
-  
   // check whether the output tensor should requires_grad on or not
   bool isGradOn(const Tensor* other) const;
  

@@ -1,6 +1,7 @@
 do convolution
+  consider DOF of the kernal
   reshape kernal to feature shape 1s and 0s
-  tensor :: cat, reshape
+  tensor :: reshape
 test
 do rnn
 test
