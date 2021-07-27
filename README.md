@@ -2,6 +2,8 @@
 
 This project is to get deep understanding of field of AI. Currently only supports for C++. In development just out of curiosity. Use cases are similar to PyTorch DL framework. Some modules are in progress. 
 
+This framework is depend on arrayfire tensor library. Hard to work with. Lot of dependancies. We shoould make our own. Look [nD](https://github.com/lilanka/nD)
+
 ## Example  
 This is how PyTorch does it
 ```python
