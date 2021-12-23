@@ -1,12 +1,12 @@
-cmake_minimum_required(VERSION 3.20)
+cmake_minimum_required(VERSION 3.22)
 project(Falcon)
 
 set(SOURCE
   ${PROJECT_SOURCE_DIR}/falcon/tensor/Tensor.cc
   ${PROJECT_SOURCE_DIR}/falcon/autograd/Functional.cc
   ${PROJECT_SOURCE_DIR}/falcon/nn/Linear.cc
-  #${PROJECT_SOURCE_DIR}/test/linear.cc
-  ${PROJECT_SOURCE_DIR}/test/operations.cc
+  ${PROJECT_SOURCE_DIR}/test/linear.cc
+  #${PROJECT_SOURCE_DIR}/test/operations.cc
 )
 add_executable(falcon ${SOURCE})
 
