@@ -33,5 +33,6 @@
 
 *.swo
 *.swp
+*.pyc
 
 build/
