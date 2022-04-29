@@ -1,9 +1,9 @@
 # Falcon : A Deeplearning Framework.
 
-This project is to get deep understanding of field of AI. Currently only supports for C++. In development just out of curiosity. Use cases are similar to PyTorch DL framework. Some modules are in progress. 
+Falcon has a PyTorch-like API that supports C++. Contribution to Python support is welcome.
 
 ## Example  
-This is how PyTorch does it
+PyTorch example.
 ```python
 import torch
 
@@ -15,22 +15,21 @@ external_grad = torch.tensor([1., 1.])
 Q.backward(gradient=external_grad)
 ```
 
-This is how Falcon does it
+Falcon example. 
 ```c++
 #include <arrayfire.h>
 #include "falcon/falcon.h"
 
 using namespace Falcon;
 
-Tensor aa = Tensor({2, 3}, true);
-Tensor bb = Tensor({6, 4}, true);
+Tensor a = Tensor({2, 3}, true);
+Tensor b = Tensor({6, 4}, true);
+Tensor c = (a^3) * 3 - b^2;
 
-Tensor Q = (aa^3)*3 - (bb^2);
-
-Q.backward({1, 1});
+c.backward();
 ```
 
-## Test 
+## For Contributors 
 ```shell
 git clone https://github.com/lilanka/Falcon.git
 cd Falcon
@@ -38,8 +37,4 @@ mkdir build && cd build
 cmake ..
 make 
 ./falcon
-```
-or 
-```
-./run.sh
 ```

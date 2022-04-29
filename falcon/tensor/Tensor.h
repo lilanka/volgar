@@ -80,7 +80,7 @@ public:
   Tensor cat(const Tensor& tensor1, int dim);
 
   // check whether the output tensor should requires_grad on or not
-  bool isGradOn(const Tensor* other) const;
+  bool isGradOn() const;
  
   /*
   * DFS
@@ -119,6 +119,7 @@ public:
   * used for backward operation. call the backward functions of each operation
   */
   void gradOp(const Tensor& tensor, const af::array& output_grad);  
+
 private:   
   /*
   * tensor data stored in here
@@ -127,7 +128,7 @@ private:
     af::array data;                       // data of the variable
     bool requires_grad{false};            // does this variable calculate the grads
     std::vector<Tensor> parents;          // parents of this variable
-    std::unique_ptr<af::array> grad{nullptr}; // gradient of output w.r.t this tensor 
+    af::array grad; // gradient of output w.r.t this tensor 
     bool visited{false};                  // marked as visited in DFS
     std::unique_ptr<float> _mul{nullptr}; // used when multiplication or pow with scalar
     std::unique_ptr<int> _op{nullptr};    // operation (gradFn) 

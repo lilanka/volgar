@@ -6,7 +6,6 @@
 using namespace Falcon;
 class F {
 public:
-  /* -------------------- ops ----------------------------*/
   Tensor add(const Tensor& a, const Tensor& b);
   Tensor sub(const Tensor& a, const Tensor& b);
   Tensor div(const Tensor& a, const float b);
@@ -15,7 +14,6 @@ public:
   Tensor mul1(const Tensor& a, const Tensor& b);
   Tensor pow(const Tensor& a, const float b);
 
-  /* --------------------- activation functions ----------------*/
   Tensor relu(const Tensor& a);
   Tensor sigmoid(const Tensor& a);
   Tensor tanh(const Tensor& a);

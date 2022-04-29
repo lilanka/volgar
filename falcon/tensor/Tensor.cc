@@ -11,7 +11,7 @@ Tensor::Tensor(af::array data, bool requires_grad) {
   tensorData_->data = std::move(data);
   tensorData_->requires_grad = requires_grad;
   if (requires_grad)
-    tensorData_->grad = std::make_unique<af::array>(af::constant(0, tensorData_->data.dims()));
+    tensorData_->grad = af::constant(0, tensorData_->data.dims());
 }
 
 Tensor::Tensor(af::array data, std::vector<Tensor> parents, bool requires_grad, int _op) {
@@ -19,9 +19,8 @@ Tensor::Tensor(af::array data, std::vector<Tensor> parents, bool requires_grad, 
   tensorData_->requires_grad = requires_grad;
   tensorData_->parents = std::move(parents); 
   tensorData_->_op = std::make_unique<int>(std::move(_op));
-  if (requires_grad) {
-    tensorData_->grad = std::make_unique<af::array>(af::constant(0, tensorData_->data.dims()));
-  }
+  if (requires_grad)
+    tensorData_->grad = af::constant(0, tensorData_->data.dims());
 }
 
 Tensor::Tensor(af::array data, std::vector<Tensor> parents, bool requires_grad, float _mul, int _op) {
@@ -30,12 +29,12 @@ Tensor::Tensor(af::array data, std::vector<Tensor> parents, bool requires_grad, 
   tensorData_->parents = std::move(parents); 
   tensorData_->_op = std::make_unique<int>(std::move(_op));
   tensorData_->_mul = std::make_unique<float>(std::move(_mul));
-  if (requires_grad) {
-    tensorData_->grad = std::make_unique<af::array>(af::constant(0, tensorData_->data.dims()));
-  }
+  if (requires_grad)
+    tensorData_->grad = af::constant(0, tensorData_->data.dims());
 }
-bool Tensor::isGradOn(const Tensor* other) const {
-  if (tensorData_->requires_grad || (*other).tensorData_->requires_grad)  { return true; }
+bool Tensor::isGradOn() const {
+  if (tensorData_->requires_grad)
+    return true;
   return false; 
 }
 
@@ -46,7 +45,7 @@ af::array& Tensor::array() const {
 af::array Tensor::grad() const {
   if (!tensorData_->requires_grad)
     throw std::invalid_argument {"Gradient calculation deosn't allowed!"};
-  return *tensorData_->grad;
+  return tensorData_->grad;
 }
 
 Tensor Tensor::operator+(const Tensor& tensor) {
@@ -113,59 +112,59 @@ void Tensor::gradOp(const Tensor& tensor, const af::array& output_grad) {
 void Tensor::reluBackward(const af::array& output_grad) const {
   for (Tensor& parent: tensorData_->parents) {
     if (parent.tensorData_->requires_grad)
-      *parent.tensorData_->grad += output_grad * (parent.array() > *parent.tensorData_->grad);
+      parent.tensorData_->grad += output_grad * (parent.array() > parent.tensorData_->grad);
   }
 }
 
 void Tensor::sigmoidBackward(const af::array& output_grad) const {
   for (Tensor& parent: tensorData_->parents) {
     if (parent.tensorData_->requires_grad)
-      *parent.tensorData_->grad += output_grad * (array() * (af::constant(1, array().dims()) - array()));
+      parent.tensorData_->grad += output_grad * (array() * (af::constant(1, array().dims()) - array()));
   }
 }
 
 void Tensor::tanhBackward(const af::array& output_grad) const {
   for (Tensor& parent: tensorData_->parents) {
     if (parent.tensorData_->requires_grad)
-      *parent.tensorData_->grad += output_grad * (1 - array() * array());
+      parent.tensorData_->grad += output_grad * (1 - array() * array());
   }
 }
 void Tensor::addBackward(const af::array& output_grad) const {
   for (Tensor& parent: tensorData_->parents) {
     if (parent.tensorData_->requires_grad)
-      *parent.tensorData_->grad += output_grad;
+      parent.tensorData_->grad += output_grad;
   }
 }
 void Tensor::mulBackward1(const af::array& output_grad) const {
   std::vector<Tensor> parents = tensorData_->parents;
-  *parents[0].tensorData_->grad += parents[1].array() * output_grad;
-  *parents[1].tensorData_->grad += parents[0].array() * output_grad;
+  parents[0].tensorData_->grad += parents[1].array() * output_grad;
+  parents[1].tensorData_->grad += parents[0].array() * output_grad;
 }
 void Tensor::subBackward(const af::array& output_grad) const{
   for (Tensor& parent: tensorData_->parents) {
     if (parent.tensorData_->requires_grad)
-      *parent.tensorData_->grad += output_grad;
+      parent.tensorData_->grad += output_grad;
   }
 }
 
 void Tensor::mulBackward0(const af::array& output_grad) const {
   std::vector<Tensor> parent = tensorData_->parents;
-  *parent[0].tensorData_->grad += output_grad * (*tensorData_->_mul);
+  parent[0].tensorData_->grad += output_grad * (*tensorData_->_mul);
 }
 
 void Tensor::powBackward(const af::array& output_grad) const {
   std::vector<Tensor> parent = tensorData_->parents;
-  *parent[0].tensorData_->grad += output_grad * (*tensorData_->_mul * (af::pow(parent[0].array(), *tensorData_->_mul - 1)));
+  parent[0].tensorData_->grad += output_grad * (*tensorData_->_mul * (af::pow(parent[0].array(), *tensorData_->_mul - 1)));
 }
 
 void Tensor::divBackward(const af::array& output_grad) const {
   std::vector<Tensor> parent = tensorData_->parents;
-  *parent[0].tensorData_->grad += output_grad / (*tensorData_->_mul);
+  parent[0].tensorData_->grad += output_grad / (*tensorData_->_mul);
 }
 
 void Tensor::matmulBackward(const af::array& output_grad) const {
   std::vector<Tensor> parent = tensorData_->parents;
-  *parent[1].tensorData_->grad += af::matmulTN(parent[0].array(), output_grad);
+  parent[1].tensorData_->grad += af::matmulTN(parent[0].array(), output_grad);
 }
 
 void Tensor::backward(const Tensor& tensor, const af::array& output_grad) {
@@ -173,16 +172,16 @@ void Tensor::backward(const Tensor& tensor, const af::array& output_grad) {
   tensor.tensorData_->visited = {true};
   gradOp(tensor, output_grad);
   for (Tensor& parent: tensor.tensorData_->parents) {  
-    backward(parent, *parent.tensorData_->grad);
+    backward(parent, parent.tensorData_->grad);
   }
 }
 void Tensor::backward(af::array initial_grad) {
-  tensorData_->grad = std::make_unique<af::array>(std::move(initial_grad));
-  backward(*this, *tensorData_->grad);
+  tensorData_->grad = std::move(initial_grad);
+  backward(*this, tensorData_->grad);
 }
 
 void Tensor::backward() {
-  tensorData_->grad = std::make_unique<af::array>(af::constant(1, array().dims()));
-  backward(*this, *tensorData_->grad);
+  tensorData_->grad = af::constant(1, array().dims());
+  backward(*this, tensorData_->grad);
 }
 } // namespace Falcon
