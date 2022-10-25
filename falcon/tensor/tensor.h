@@ -68,7 +68,7 @@ public:
 private:
   struct tensorData {
     af::array data;
-    bool requires_grad{true};
+    bool requires_grad{false};
     bool visited{false};
     af::array grad;               // Gradient of the output w.r.t grad
     float mul;                    // Used when operations uses scalars

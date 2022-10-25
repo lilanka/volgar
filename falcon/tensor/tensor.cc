@@ -106,22 +106,22 @@ void tensor::pow_backword(const af::array& output_grad) const {
 
 void tensor::backword(const tensor& curr_tensor, const af::array& output_grad) {
 #define GRAD_OpType() {                                               \
-  switch (curr_tensor.tensor_data->op) {                         \
+  switch (curr_tensor.tensor_data->op) {                              \
     case OpType::ADD: curr_tensor.add_backword(output_grad); break;   \
     case OpType::SUB: curr_tensor.sub_backword(output_grad); break;   \
     case OpType::MUL: curr_tensor.mul_backword(output_grad); break;   \
     case OpType::DIV: curr_tensor.div_backword(output_grad); break;   \
     case OpType::POW: curr_tensor.pow_backword(output_grad); break;   \
-  }                                                               \
+  }                                                                   \
 }
-#define GRAD_FN() {                                                   \
-  switch (curr_tensor.tensor_data->op) {                              \
+#define GRAD_FN() {                                                       \
+  switch (curr_tensor.tensor_data->op) {                                  \
     case OpType::ADD: std::cout << "add_backword()" << std::endl; break;  \
     case OpType::SUB: std::cout << "sub_backword()" << std::endl; break;  \
     case OpType::MUL: std::cout << "mul_backword()" << std::endl; break;  \
     case OpType::DIV: std::cout << "div_backword()" << std::endl; break;  \
     case OpType::POW: std::cout << "pow_backword()" << std::endl; break;  \
-  }                                                                   \
+  }                                                                       \
 }
   if (curr_tensor.tensor_data->visited || curr_tensor.tensor_data->parents.size() == 0) 
     return;
