@@ -1,5 +1,4 @@
 #include <iostream>
-#include <boost/variant.hpp>
 
 #include "tensor.h"
 #include "falcon/functional/functional.h"
