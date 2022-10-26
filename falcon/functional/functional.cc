@@ -23,7 +23,7 @@ tensor F::mul(const tensor& x, const float number) {
 }
 
 tensor F::mul(const tensor& x, const tensor& y) {
-  return tensor(x.data() * y.data(), x.is_grad_on(), {x, y}, OpType::MUL);
+  return tensor(x.data() * y.data(), x.is_grad_on() || y.is_grad_on(), {x, y}, OpType::MUL);
 }
 
 tensor F::pow(const tensor& x, const float number) {

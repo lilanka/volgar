@@ -38,6 +38,7 @@ public:
 
   // Tensor linear operations
   tensor operator*(const float number);
+  tensor operator*(const tensor& other);
   tensor operator/(const float number);
   tensor operator^(const float number);
   tensor operator+(const tensor& other);
@@ -62,9 +63,12 @@ public:
   // DFS algorithm
   // Calculate the gradients
   void backword(const tensor& curr_tensor, const af::array& output_grad);
-  // Backward differentiation
-  void backword();
 
+  // Backward differentiation
+  // TODO: Add higher order gradients
+  // retain_graph for second order gradients
+  void backword(bool retain_graph = false);
+  
 private:
   struct tensorData {
     af::array data;

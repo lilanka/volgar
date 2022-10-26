@@ -65,6 +65,11 @@ tensor tensor::operator*(const float number) {
   return f.mul(*this, number);
 }
 
+tensor tensor::operator*(const tensor& other) {
+  F f;
+  return f.mul(*this, other);
+}
+
 tensor tensor::operator^(const float number) {
   F f;
   return f.pow(*this, number);
@@ -78,33 +83,39 @@ void tensor::add_backword(const af::array& output_grad) const {
 }
 
 void tensor::sub_backword(const af::array& output_grad) const {
-  std::vector<tensor> parents = tensor_data->parents;
-  tensor_data->parents[0].tensor_data->grad += output_grad;
-  tensor_data->parents[1].tensor_data->grad -= output_grad;
+  if (tensor_data->parents[0].tensor_data->requires_grad)
+    tensor_data->parents[0].tensor_data->grad += output_grad;
+  if (tensor_data->parents[1].tensor_data->requires_grad)
+    tensor_data->parents[1].tensor_data->grad -= output_grad;
 }
 
 void tensor::mul_backword(const af::array& output_grad) const {
-  std::vector<tensor> parents = tensor_data->parents;
-  if (parents.size() == 1)
+  if (tensor_data->parents.size() == 1)
     tensor_data->parents[0].tensor_data->grad += output_grad * tensor_data->mul;  
   else {
-    tensor_data->parents[0].tensor_data->grad += parents[1].data() * output_grad;
-    tensor_data->parents[1].tensor_data->grad += parents[0].data() * output_grad;
+    std::vector<tensor> parents = tensor_data->parents;
+    if (tensor_data->parents[0].tensor_data->requires_grad)
+      tensor_data->parents[0].tensor_data->grad += parents[1].data() * output_grad;
+    if (tensor_data->parents[1].tensor_data->requires_grad)
+      tensor_data->parents[1].tensor_data->grad += parents[0].data() * output_grad;
   }
 }
 
 void tensor::div_backword(const af::array& output_grad) const {
-  tensor_data->parents[0].tensor_data->grad += output_grad / tensor_data->mul;
+  if (tensor_data->parents[0].tensor_data->requires_grad)
+    tensor_data->parents[0].tensor_data->grad += output_grad / tensor_data->mul;
 }
 
 void tensor::pow_backword(const af::array& output_grad) const {
-  std::vector<tensor> parents = tensor_data->parents;
-  tensor_data->parents[0].tensor_data->grad += output_grad * tensor_data->mul * \
-    af::pow(parents[0].data(), tensor_data->mul - 1);
+  if (tensor_data->parents[0].tensor_data->requires_grad) {
+    tensor parent = tensor_data->parents[0];
+    tensor_data->parents[0].tensor_data->grad += output_grad * tensor_data->mul * \
+      af::pow(parent.data(), tensor_data->mul - 1);
+  }
 }
 
 void tensor::backword(const tensor& curr_tensor, const af::array& output_grad) {
-#define GRAD_OpType() {                                               \
+#define GRAD_OPTYPE() {                                               \
   switch (curr_tensor.tensor_data->op) {                              \
     case OpType::ADD: curr_tensor.add_backword(output_grad); break;   \
     case OpType::SUB: curr_tensor.sub_backword(output_grad); break;   \
@@ -125,18 +136,20 @@ void tensor::backword(const tensor& curr_tensor, const af::array& output_grad) {
   if (curr_tensor.tensor_data->visited || curr_tensor.tensor_data->parents.size() == 0) 
     return;
   curr_tensor.tensor_data->visited = true;
-  GRAD_OpType();
+  GRAD_OPTYPE();
 //#define DEBUGING_MODE
 #ifdef DEBUGING_MODE
   GRAD_FN();
 #endif
   for (tensor& parent: curr_tensor.tensor_data->parents)
-    backword(parent, parent.tensor_data->grad);
-#undef GRAD_OpType
+    if (parent.tensor_data->requires_grad)
+      backword(parent, parent.tensor_data->grad);
+#undef GRAD_OPTYPE
 #undef GRAD_FN
 }
 
-void tensor::backword() {
+void tensor::backword(bool retain_graph) {
+  // Implicit gradient creation
   tensor_data->grad = af::constant(1, data().dims());
   backword(*this, tensor_data->grad);
 }

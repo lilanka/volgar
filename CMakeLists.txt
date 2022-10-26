@@ -6,8 +6,7 @@ set(CMAKE_CXX_STANDARD 20)
 set(SOURCE
   ${PROJECT_SOURCE_DIR}/falcon/tensor/tensor.cc
   ${PROJECT_SOURCE_DIR}/falcon/functional/functional.cc
-  ${PROJECT_SOURCE_DIR}/test/test_autodiff.cc
-  #${PROJECT_SOURCE_DIR}/test/test_tensor.cc
+  ${PROJECT_SOURCE_DIR}/test/rosenbrock_banana.cc
 )
 
 add_executable(falcon ${SOURCE})
