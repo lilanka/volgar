@@ -7,7 +7,8 @@ set(SOURCE
   ${PROJECT_SOURCE_DIR}/falcon/tensor/tensor.cc
   ${PROJECT_SOURCE_DIR}/falcon/functional/functional.cc
   #${PROJECT_SOURCE_DIR}/test/rosenbrock_banana.cc
-  ${PROJECT_SOURCE_DIR}/test/test_autodiff.cc
+  #${PROJECT_SOURCE_DIR}/test/test_autodiff.cc
+  ${PROJECT_SOURCE_DIR}/test/test_tensor.cc
 )
 
 add_executable(falcon ${SOURCE})

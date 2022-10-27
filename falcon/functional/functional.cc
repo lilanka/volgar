@@ -18,6 +18,10 @@ tensor F::div(const tensor& x, const float number) {
   return tensor(x.data() / number, x.is_grad_on(), {x}, number, OpType::DIV);
 }
 
+tensor F::div(const tensor& x, const tensor& y) {
+  return tensor(x.data() / y.data(), x.is_grad_on() || y.is_grad_on(), {x, y}, OpType::DIV);
+}
+
 tensor F::mul(const tensor& x, const float number) {
   return tensor(x.data() * number, x.is_grad_on(), {x}, number, OpType::MUL);
 }
@@ -25,6 +29,8 @@ tensor F::mul(const tensor& x, const float number) {
 tensor F::mul(const tensor& x, const tensor& y) {
   return tensor(x.data() * y.data(), x.is_grad_on() || y.is_grad_on(), {x, y}, OpType::MUL);
 }
+
+
 
 tensor F::pow(const tensor& x, const float number) {
   return tensor(af::pow(x.data(), number), x.is_grad_on(), {x}, number, OpType::POW);

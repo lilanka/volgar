@@ -16,7 +16,7 @@ enum class OpType {
   // Binary Ops
   ADD, SUB, DIV, MUL, POW,
   // Unary Ops
-  NEG, RELU, EXP, LOG, SIN
+  NEG, RELU, EXP, LOG, SIN, COS,
   // Reduce Ops
   SUM, MAX
 };
@@ -37,9 +37,11 @@ public:
   af::array& grad() const;
 
   // Tensor linear operations
+  // TODO: add >, >=, <, <= operators
   tensor operator*(const float number);
   tensor operator*(const tensor& other);
   tensor operator/(const float number);
+  tensor operator/(const tensor& other);
   tensor operator^(const float number);
   tensor operator+(const tensor& other);
   tensor operator-(const tensor& other);
@@ -60,6 +62,7 @@ public:
   void div_backward(const af::array& output_grad) const;
   void pow_backward(const af::array& output_grad) const;
   void sin_backward(const af::array& output_grad) const;
+  void cos_backward(const af::array& output_grad) const;
 
   // DFS algorithm
   // Calculate the gradients

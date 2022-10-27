@@ -60,6 +60,11 @@ tensor tensor::operator/(const float number) {
   return f.div(*this, number);
 }
 
+tensor tensor::operator/(const tensor& other) {
+  F f;
+  return f.div(*this, other);
+}
+
 tensor tensor::operator*(const float number) {
   F f;
   return f.mul(*this, number);
@@ -90,20 +95,29 @@ void tensor::sub_backward(const af::array& output_grad) const {
 }
 
 void tensor::mul_backward(const af::array& output_grad) const {
-  if (tensor_data->parents.size() == 1)
-    tensor_data->parents[0].tensor_data->grad += output_grad * tensor_data->mul;  
-  else {
-    std::vector<tensor> parents = tensor_data->parents;
+  if (tensor_data->parents.size() == 1) {
     if (tensor_data->parents[0].tensor_data->requires_grad)
-      tensor_data->parents[0].tensor_data->grad += parents[1].data() * output_grad;
+      tensor_data->parents[0].tensor_data->grad += output_grad * tensor_data->mul;  
+  } else {
+    if (tensor_data->parents[0].tensor_data->requires_grad)
+      tensor_data->parents[0].tensor_data->grad += tensor_data->parents[1].data() * output_grad;
     if (tensor_data->parents[1].tensor_data->requires_grad)
-      tensor_data->parents[1].tensor_data->grad += parents[0].data() * output_grad;
+      tensor_data->parents[1].tensor_data->grad += tensor_data->parents[0].data() * output_grad;
   }
 }
 
 void tensor::div_backward(const af::array& output_grad) const {
-  if (tensor_data->parents[0].tensor_data->requires_grad)
-    tensor_data->parents[0].tensor_data->grad += output_grad / tensor_data->mul;
+  if (tensor_data->parents.size() == 1) {
+    if (tensor_data->parents[0].tensor_data->requires_grad)
+      tensor_data->parents[0].tensor_data->grad += output_grad / tensor_data->mul;
+  } else {
+    if (tensor_data->parents[0].tensor_data->requires_grad)
+      tensor_data->parents[0].tensor_data->grad += \
+        (1. / tensor_data->parents[1].data()) * output_grad;
+    if (tensor_data->parents[1].tensor_data->requires_grad)
+      tensor_data->parents[1].tensor_data->grad -= \
+        ((tensor_data->parents[0].data()) / af::pow(tensor_data->parents[1].data(), 2)) * output_grad;
+  }
 }
 
 void tensor::pow_backward(const af::array& output_grad) const {
@@ -152,7 +166,7 @@ void tensor::backward(const tensor& curr_tensor, const af::array& output_grad) {
     return;
   curr_tensor.tensor_data->visited = true;
   GRAD_OPTYPE();
-//#define DEBUGING_MODE
+#define DEBUGING_MODE
 #ifdef DEBUGING_MODE
   GRAD_FN();
 #endif
