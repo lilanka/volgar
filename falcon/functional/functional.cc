@@ -30,4 +30,12 @@ tensor F::pow(const tensor& x, const float number) {
   return tensor(af::pow(x.data(), number), x.is_grad_on(), {x}, number, OpType::POW);
 }
 
+tensor F::sin(const tensor& x) {
+  return tensor(af::sin(x.data()), x.is_grad_on(), {x}, OpType::SIN);      
+}
+
+tensor F::cos(const tensor& x) {
+  return tensor(af::cos(x.data()), x.is_grad_on(), {x}, OpType::COS);      
+}
+
 } // namespace falcon

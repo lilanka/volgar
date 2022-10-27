@@ -14,6 +14,10 @@ public:
   tensor mul(const tensor& x, const float number);
   tensor mul(const tensor& x, const tensor& y);
   tensor pow(const tensor& x, const float number);
+
+  // Sin functions
+  tensor sin(const tensor& x);
+  tensor cos(const tensor& x);
 };
 
 } // namespace falcon

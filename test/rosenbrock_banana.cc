@@ -19,7 +19,7 @@ int main() {
   tensor rb = rosenbrock_banana(x1, x2);
 
   // calculate gradients
-  rb.backword();
+  rb.backward();
 
   af_print(x1.grad());
   af_print(x2.grad());

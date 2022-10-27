@@ -16,7 +16,7 @@ enum class OpType {
   // Binary Ops
   ADD, SUB, DIV, MUL, POW,
   // Unary Ops
-  NEG, RELU, EXP, LOG,
+  NEG, RELU, EXP, LOG, SIN
   // Reduce Ops
   SUM, MAX
 };
@@ -54,20 +54,21 @@ public:
   */
 
   // Gradients of operations 
-  void add_backword(const af::array& output_grad) const;
-  void sub_backword(const af::array& output_grad) const;
-  void mul_backword(const af::array& output_grad) const;
-  void div_backword(const af::array& output_grad) const;
-  void pow_backword(const af::array& output_grad) const;
+  void add_backward(const af::array& output_grad) const;
+  void sub_backward(const af::array& output_grad) const;
+  void mul_backward(const af::array& output_grad) const;
+  void div_backward(const af::array& output_grad) const;
+  void pow_backward(const af::array& output_grad) const;
+  void sin_backward(const af::array& output_grad) const;
 
   // DFS algorithm
   // Calculate the gradients
-  void backword(const tensor& curr_tensor, const af::array& output_grad);
+  void backward(const tensor& curr_tensor, const af::array& output_grad);
 
   // Backward differentiation
   // TODO: Add higher order gradients
   // retain_graph for second order gradients
-  void backword(bool retain_graph = false);
+  void backward(bool retain_graph = false);
   
 private:
   struct tensorData {
