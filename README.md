@@ -16,6 +16,13 @@ b = Tensor([6, 4], requires_grad=True)
 c = (a ** 3) * 3 - b ** 2
 c.backward()
 ```
-## Things that will be added
-* NN library
-* Optim library
+
+## Neural Networks
+Yeah, similar to PyTorch
+```python
+x = Tensor([[1, 2, 3, 4, 5]])
+
+# Linear layers
+model = Linear(5, 6)
+y = model(x)
+```

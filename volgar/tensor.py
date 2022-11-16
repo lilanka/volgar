@@ -1,7 +1,18 @@
-import numpy as np
+import math
 
-from .op_type import OpType
+import numpy as np
+from enum import Enum
+
 from .common import *
+
+class OpType(Enum):
+  ADD = 1
+  SUB = 2
+  MUL = 3
+  DIM = 4
+  POW = 5
+  DIV = 6
+  DOT = 7 
 
 class Tensor:
   def __init__(self, data, requires_grad=False, parents=None, mul=None, op=None):
@@ -110,3 +121,11 @@ class Tensor:
     if tensor.parents[0].requires_grad:
       if tensor.parents[0].requires_grad:
         tensor.parents[0].grad += tensor.grad * tensor.mul * (tensor.parents[0].data ** (tensor.mul - 1))
+
+  @classmethod
+  def zeros(cls, *shape, **kwargs):
+    return cls(np.zeros(shape, dtype=np.float32), **kwargs)
+
+  @classmethod
+  def glorot_uniform(cls, *shape, **kwargs):
+    return cls((np.random.default_rng().random(size=shape, dtype=np.float32) * 2 - 1) * ((6 / (shape[0] + math.prod(shape[1:]))) ** 0.5), **kwargs) 
