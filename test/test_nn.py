@@ -2,7 +2,10 @@ import torch
 import numpy as np
 
 from volgar.tensor import Tensor
-from volgar.nn import Linear
+from volgar.nn import Linear, Conv2d
+
+def test_conv2d():
+  model = Conv2d(6, 10, 3) 
 
 def test_linear():
   x = Tensor([[1, 2, 3, 4, 5]])
@@ -10,6 +13,8 @@ def test_linear():
   # volgar model
   model = Linear(5, 6)
   y = model(x)
+
+  print(y)
 
   # same thing in torch
   with torch.no_grad():
@@ -22,4 +27,5 @@ def test_linear():
   # testing
   np.testing.assert_allclose(y.data, torch_y.detach().numpy(), atol=5e-4, rtol=1e-5)
 
+#test_linear()
 test_linear()

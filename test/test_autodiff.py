@@ -6,8 +6,7 @@ b = Tensor([6, 4], requires_grad=True)
 c = (a ** 3) * 3 - b ** 2
 c.backward()
 
-c()
 print(a.grad)
-((a**2) * 9)()
+print((a**2) * 9)
 print(b.grad)
-(b * (-2))()
+print(b * (-2))

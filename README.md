@@ -19,6 +19,7 @@ c.backward()
 
 ## Neural Networks
 Yeah, similar to PyTorch
+
 ```python
 x = Tensor([[1, 2, 3, 4, 5]])
 

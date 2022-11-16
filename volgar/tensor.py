@@ -24,8 +24,8 @@ class Tensor:
     self.mul = mul
     self.visited = False
 
-  def __call__(self):
-    return print(self.data)
+  def __repr__(self):
+    return f"Tensor: {self.data}, requires_grad={self.requires_grad}"
 
   def size(self):
     return self.data.shape 
@@ -126,6 +126,7 @@ class Tensor:
   def zeros(cls, *shape, **kwargs):
     return cls(np.zeros(shape, dtype=np.float32), **kwargs)
 
+  # todo: look into kaiming initialization methods
   @classmethod
   def glorot_uniform(cls, *shape, **kwargs):
     return cls((np.random.default_rng().random(size=shape, dtype=np.float32) * 2 - 1) * ((6 / (shape[0] + math.prod(shape[1:]))) ** 0.5), **kwargs) 
