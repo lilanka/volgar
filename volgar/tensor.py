@@ -24,30 +24,30 @@ class Tensor:
   def __add__(self, other):
     other = other if isinstance(other, Tensor) else Tensor(other)
     if other.size() == self.size():  
-      out = Tensor(self.data + other.data, self.requires_grad or other.requires_grad, parents=[self, other], op=OpType.ADD)
-      return out
+      return Tensor(self.data + other.data, self.requires_grad or other.requires_grad, parents=[self, other], op=OpType.ADD)
     error("Dimensions should be equal")
 
   def __sub__(self, other):
     other = other if isinstance(other, Tensor) else Tensor(other)
     if other.size() == self.size():  
-      out = Tensor(self.data - other.data, self.requires_grad or other.requires_grad, parents=[self, other], op=OpType.SUB)
-      return out
+      return Tensor(self.data - other.data, self.requires_grad or other.requires_grad, parents=[self, other], op=OpType.SUB)
     error("Dimensions should be equal")
 
   def __mul__(self, other):
-    # elementwise multiplication
-    # other: can be a one dimensional tensor or a natural number 
     other = other if isinstance(other, Tensor) else Tensor(other)
-    out = Tensor(self.data * other.data, self.requires_grad or other.requires_grad, parents=[self], mul=other.data, op=OpType.MUL)
-    return out
+    """
+    if self.size()[-1] == other.size()[0]:
+      # elementwise multiplication
+      print("passed")
+      return Tensor(np.dot(self.data, other.data), self.requires_grad or other.requires_grad, parents=[self, other], op=OpType.DOT)
+    """
+    return Tensor(self.data * other.data, self.requires_grad or other.requires_grad, parents=[self], mul=other.data, op=OpType.MUL)
 
   def __pow__(self, other):
     # elementwise power 
     # other: can be a one dimensional tensor or a natural number 
     other = other if isinstance(other, Tensor) else Tensor(other)
-    out = Tensor(self.data ** other.data, self.requires_grad or other.requires_grad, parents=[self], mul=other.data, op=OpType.POW)
-    return out
+    return Tensor(self.data ** other.data, self.requires_grad or other.requires_grad, parents=[self], mul=other.data, op=OpType.POW)
 
   def backward(self):
     self.grad = np.ones_like(self.data)
@@ -69,6 +69,7 @@ class Tensor:
       case OpType.ADD: self._add_backward(tensor)
       case OpType.SUB: self._sub_backward(tensor)
       case OpType.MUL: self._mul_backward(tensor)
+      case OpType.DOT: self._dot_backward(tensor)
       case OpType.DIV: self._div_backward(tensor)
       case OpType.POW: self._pow_backward(tensor)
       case OpType.RELU: self._relu_backward(tensor)
@@ -102,6 +103,14 @@ class Tensor:
       if self.parents[1].requires_grad: self.parents[1].grad += self.parents[0].data * grad
     """
 
+  # https://en.wikipedia.org/wiki/Vector_calculus_identities#cite_note-4:~:text=.-,Dot%20product%20rule,-%5Bedit%5D
+  def _dot_backward(self, other):
+    pass
+    """
+    if tensor.parents[0].requires_grad and tensor.parents[1].requires_grad:
+      tensor.parents
+    """
+
   def _div_backward(self, grad):
     if tensor.mul is not None:
       if tensor.parents[0].requires_grad: tensor.parents[0].grad += tensor.grad / tensor.mul
@@ -118,7 +127,7 @@ class Tensor:
 
   def _relu_backward(self, tensor):
     if tensor.parents[0].requires_grad:
-      tensor.parents[0].grad += 0 if tensor.data <= 0 else tensor.grad
+      tensor.parents[0].grad += 0 if (tensor.data <= 0).all() == True else tensor.grad
 
   @classmethod
   def zeros(cls, *shape, **kwargs):

@@ -12,11 +12,14 @@ def test_conv2d():
   print(x.size())
 
 def test_linear():
-  x = Tensor([[1, 2, 3, 4, 5]])
+  x = Tensor([[1, 2, 3, 4, 5]], requires_grad=True)
 
   # volgar model
   linear = vnn.Linear(5, 6)
   vrelu = vnn.ReLU() 
+  y = vrelu(linear(x))
+
+  """
   y = vrelu(linear(x))
 
   # same thing in torch
@@ -31,11 +34,11 @@ def test_linear():
   # testing
   np.testing.assert_allclose(y.data, torch_y.detach().numpy(), atol=5e-4, rtol=1e-5)
 
-  """
   k = vrelu(x)
   k.backward()
   print(x.grad)
   """
+  print(y)
 
 test_linear()
 #test_conv2d()
