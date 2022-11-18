@@ -22,5 +22,5 @@ def transpose(a):
 def dot(a, b):
   # dim(a): nxm, dim(b): mxq
   if a.requires_grad or b.requires_grad:
-    return Tensor(np.dot(a, b), requires_grad=True, parents=[a, b], op=OpType.DOT)
+    return Tensor(np.dot(a.data, b.data), requires_grad=True, parents=[a, b], op=OpType.DOT)
   return Tensor(np.dot(a.data, b.data), requires_grad=False)

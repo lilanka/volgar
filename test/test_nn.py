@@ -19,9 +19,6 @@ def test_linear():
   vrelu = vnn.ReLU() 
   y = vrelu(linear(x))
 
-  """
-  y = vrelu(linear(x))
-
   # same thing in torch
   with torch.no_grad():
     torch_layer = torch.nn.Linear(5, 6).eval()
@@ -34,11 +31,9 @@ def test_linear():
   # testing
   np.testing.assert_allclose(y.data, torch_y.detach().numpy(), atol=5e-4, rtol=1e-5)
 
-  k = vrelu(x)
-  k.backward()
-  print(x.grad)
-  """
-  print(y)
+  y.backward()
+
+  print(y, torch_y)
 
 test_linear()
 #test_conv2d()

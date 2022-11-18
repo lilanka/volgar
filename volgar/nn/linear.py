@@ -7,5 +7,4 @@ class Linear:
     self.bias = Tensor.zeros(out_features) if bias else None
 
   def __call__(self, x):
-    out = dot(x, transpose(self.weight))
-    return out 
+    return dot(x, transpose(self.weight))

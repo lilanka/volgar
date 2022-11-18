@@ -7,7 +7,7 @@ from .ops import OpType
 
 class Tensor:
   def __init__(self, data, requires_grad=False, parents=None, mul=None, op=None):
-    self.data = np.array(data)
+    self.data = np.round(np.array(data), 4)
     self.requires_grad = requires_grad
     self.grad = np.zeros_like(self.data)
     self.op = op
@@ -35,12 +35,6 @@ class Tensor:
 
   def __mul__(self, other):
     other = other if isinstance(other, Tensor) else Tensor(other)
-    """
-    if self.size()[-1] == other.size()[0]:
-      # elementwise multiplication
-      print("passed")
-      return Tensor(np.dot(self.data, other.data), self.requires_grad or other.requires_grad, parents=[self, other], op=OpType.DOT)
-    """
     return Tensor(self.data * other.data, self.requires_grad or other.requires_grad, parents=[self], mul=other.data, op=OpType.MUL)
 
   def __pow__(self, other):
@@ -97,28 +91,24 @@ class Tensor:
   def _mul_backward(self, tensor):
     if tensor.mul is not None:
       if tensor.parents[0].requires_grad: tensor.parents[0].grad += tensor.grad * tensor.mul
-    """
     else:
-      if self.parents[0].requires_grad: self.parents[0].grad += self.parents[1].data * grad
-      if self.parents[1].requires_grad: self.parents[1].grad += self.parents[0].data * grad
-    """
+      if tensor.parents[0].requires_grad: tensor.parents[0].grad += tensor.parents[1].data * tensor.grad
+      if tensor.parents[1].requires_grad: tensor.parents[1].grad += tensor.parents[0].data * tensor.grad
 
+  """
   # https://en.wikipedia.org/wiki/Vector_calculus_identities#cite_note-4:~:text=.-,Dot%20product%20rule,-%5Bedit%5D
   def _dot_backward(self, other):
     pass
-    """
     if tensor.parents[0].requires_grad and tensor.parents[1].requires_grad:
       tensor.parents
-    """
+  """
 
   def _div_backward(self, grad):
     if tensor.mul is not None:
       if tensor.parents[0].requires_grad: tensor.parents[0].grad += tensor.grad / tensor.mul
-    """
     else:
-      if self.parents[0].requires_grad: self.parents[0].grad += (1. / self.parents[1].data) * grad
-      if self.parents[1].requires_grad: self.parents[1].grad += (self.parents[0].data / self.parents[1].data ** 2) * grad
-    """
+      if tensor.parents[0].requires_grad: tensor.parents[0].grad += (1. / tensor.parents[1].data) * tensor.grad
+      if tensor.parents[1].requires_grad: tensor.parents[1].grad += (tensor.parents[0].data / tensor.parents[1].data ** 2) * grad
 
   def _pow_backward(self, tensor):
     # for operations where tensor to the power scalar
