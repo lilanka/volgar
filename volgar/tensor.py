@@ -1,18 +1,9 @@
 import math
 
 import numpy as np
-from enum import Enum
 
 from .common import *
-
-class OpType(Enum):
-  ADD = 1
-  SUB = 2
-  MUL = 3
-  DIM = 4
-  POW = 5
-  DIV = 6
-  DOT = 7 
+from .ops import OpType 
 
 class Tensor:
   def __init__(self, data, requires_grad=False, parents=None, mul=None, op=None):
@@ -80,6 +71,7 @@ class Tensor:
       case OpType.MUL: self._mul_backward(tensor)
       case OpType.DIV: self._div_backward(tensor)
       case OpType.POW: self._pow_backward(tensor)
+      case OpType.RELU: self._relu_backward(tensor)
 
   def _debug_grad_fn(self, tensor):
     # for debuging purposes
@@ -89,6 +81,9 @@ class Tensor:
       case OpType.MUL: print("mul_backward") 
       case OpType.DIV: print("div_backward") 
       case OpType.POW: print("pow_backward") 
+
+  # -- backward functions -- #
+  # todo: add backward functions for activation functions
 
   def _add_backward(self, tensorj):
     for parent in tensor.parents:
@@ -118,9 +113,12 @@ class Tensor:
 
   def _pow_backward(self, tensor):
     # for operations where tensor to the power scalar
+    if tensor.mul is not None:
+      tensor.parents[0].grad += tensor.grad * tensor.mul * (tensor.parents[0].data ** (tensor.mul - 1))
+
+  def _relu_backward(self, tensor):
     if tensor.parents[0].requires_grad:
-      if tensor.parents[0].requires_grad:
-        tensor.parents[0].grad += tensor.grad * tensor.mul * (tensor.parents[0].data ** (tensor.mul - 1))
+      tensor.parents[0].grad += 0 if tensor.data <= 0 else tensor.grad
 
   @classmethod
   def zeros(cls, *shape, **kwargs):

@@ -1,7 +1,8 @@
 import numpy as np
 
-from volgar.tensor import Tensor
-from volgar.common import *
+from ..tensor import Tensor
+from ..common import *
+from ..ops import OpType
 
 def add(a, b):
   return a + b
