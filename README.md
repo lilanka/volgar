@@ -1,8 +1,5 @@
-# Volgar - A framework for scientific computing.
-The framework is for serious computing purposes (i.e university assignments). 
-If it doesn't support your needs, add it and use it.
-<br><br>
-This is the kind of first principle method of learning AI.
+# Volgar - Deep Learning Framework
+This is the kind of first principle method of learning AI. Implemented reverse mode autodiff and neural networks.
 
 ## Autodiff
 PyTorch like automatic differentiation library.
